@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; input handling is unchanged.
+// Final recorded pass (input): re-issued with the authored hand-in; input handling is unchanged.
 // Keyboard and mouse input. Held keys give movement and driving axes; one-shot presses are
 // queued as bit flags and taken once by the loop, so a press between frames is never lost
 // and never counted twice. The mouse position and button are tracked for aiming.

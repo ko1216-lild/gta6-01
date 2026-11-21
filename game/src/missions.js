@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the five missions are unchanged.
+// Final recorded pass (missions): re-issued with the authored hand-in; the five missions are unchanged.
 // The story of Neon Tide, as data: five missions Rosa Delgado hands Marco Vidal from the
 // Palms Motel, each a short chain of steps the world runs. Step kinds: goto (reach the gold
 // marker), enterCar (be sitting in a car at the marker), steal (get into the marked car),

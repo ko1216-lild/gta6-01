@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the generator is unchanged.
+// Final recorded pass (random): re-issued with the authored hand-in; the generator is unchanged.
 // A small seeded random number generator (mulberry32): the same seed gives the same game,
 // which is what makes the screenshot scenes repeatable.
 

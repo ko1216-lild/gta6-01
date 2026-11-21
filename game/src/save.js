@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the save format is unchanged.
+// Final recorded pass (save): re-issued with the authored hand-in; the save format is unchanged.
 // The save: one JSON record in localStorage — money, story progress, where Marco stands,
 // and what he carries. Storage can be unavailable (private windows); then the game simply
 // lasts for the visit and nothing here throws.

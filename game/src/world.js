@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the rules are unchanged.
+// Final recorded pass (world): re-issued with the authored hand-in; the rules are unchanged.
 // The rules of Coral Bay, with no drawing and no browser in it: Marco on foot and in cars,
 // traffic that drives the road grid, pedestrians, police and the wanted level, combat,
 // pickups, and the mission chain from missions.js. step() advances one fixed step, reads an

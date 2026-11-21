@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the city layout is unchanged.
+// Final recorded pass (city): re-issued with the authored hand-in; the city layout is unchanged.
 // Coral Bay itself: the road grid, the blocks and buildings between the roads, the beach and
 // pier on the east edge, the named landmarks the story uses, and the collision tests every
 // mover shares. Built once from a seeded random, so the city is the same on every visit.
@@ -27,7 +27,12 @@ export const PARK = { x: 396, y: 1352, w: 372, h: 288 };
 export const PIER = { x: 3290, y: 1232, w: 280, h: 56 };
 
 function rectsOverlap(a, b, pad) {
-  return a.x - pad < b.x + b.w && a.x + a.w + pad > b.x && a.y - pad < b.y + b.h && a.y + a.h + pad > b.y;
+  // Two rects fail to overlap exactly when one sits wholly clear of the other on some axis.
+  const clearLeft = a.x + a.w + pad <= b.x;
+  const clearRight = b.x + b.w <= a.x - pad;
+  const clearAbove = a.y + a.h + pad <= b.y;
+  const clearBelow = b.y + b.h <= a.y - pad;
+  return !(clearLeft || clearRight || clearAbove || clearBelow);
 }
 
 export function createCity(random) {

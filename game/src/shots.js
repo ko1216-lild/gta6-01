@@ -1,4 +1,4 @@
-// Round 2 revision note: re-issued in the recorded session; the staged scenes are unchanged.
+// Final recorded pass (shots): re-issued with the authored hand-in; the staged scenes are unchanged.
 // The screenshot scenes behind ?shot=start|drive|mission|chase. Each one resets the world,
 // arranges a real moment of the game (the same state the rules produce in play — a drive in
 // traffic, a mission marker with dialogue up, a three-star chase), settles it for a fixed
@@ -9,7 +9,12 @@ import { SCREEN_PLAY, SCREEN_TITLE } from './render.js';
 const IDLE = { mx: 0, my: 0, up: false, down: false, enterPressed: false, meleePressed: false, shootHeld: false, confirmPressed: false };
 
 function settle(world, steps, input) {
-  for (let i = 0; i < steps; i += 1) world.step(1 / 60, input ?? IDLE);
+  const activeInput = input ?? IDLE;
+  let remaining = steps;
+  while (remaining > 0) {
+    world.step(1 / 60, activeInput);
+    remaining -= 1;
+  }
 }
 
 function nearestCar(state, x, y, mode) {
