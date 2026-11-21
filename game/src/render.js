@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; drawing behaviour is unchanged.
 // Drawing only: the world state and the current screen in, pixels out. A camera follows
 // Marco through Coral Bay; only what the camera can see is painted. The HUD (money, health,
 // wanted stars, objective, dialogue) and the minimap are drawn in screen space on top, and

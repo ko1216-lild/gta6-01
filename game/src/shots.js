@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; the staged scenes are unchanged.
 // The screenshot scenes behind ?shot=start|drive|mission|chase. Each one resets the world,
 // arranges a real moment of the game (the same state the rules produce in play — a drive in
 // traffic, a mission marker with dialogue up, a three-star chase), settles it for a fixed

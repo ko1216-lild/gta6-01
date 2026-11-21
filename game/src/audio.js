@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; the WebAudio synthesis is unchanged.
 // All sound is synthesised with WebAudio: no audio files, nothing to load. Short blips for
 // shots, punches and pickups; two continuous voices, the player's engine (pitch follows
 // speed) and a police siren (two-tone, only while a police car is near). M mutes everything.

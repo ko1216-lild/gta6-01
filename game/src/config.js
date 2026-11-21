@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; no tuning value was changed.
 // Every tuning number and colour for Neon Tide: Coral Bay in one place. The view is a fixed
 // 1280x720 logical area that the renderer scales to the window; the world is a much larger
 // city the camera moves through, so no rule below depends on the screen size.

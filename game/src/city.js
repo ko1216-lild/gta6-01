@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; the city layout is unchanged.
 // Coral Bay itself: the road grid, the blocks and buildings between the roads, the beach and
 // pier on the east edge, the named landmarks the story uses, and the collision tests every
 // mover shares. Built once from a seeded random, so the city is the same on every visit.

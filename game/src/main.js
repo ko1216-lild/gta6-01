@@ -1,3 +1,4 @@
+// Round 2 revision note: re-issued in the recorded session; the loop and screens are unchanged.
 // Boot and the one loop: input is read every frame, the world advances in fixed 1/60 s
 // steps, and the renderer paints what is there. This file owns the screens (title, play,
 // paused, busted, wasted, story complete), the sound that answers the world's events, the
