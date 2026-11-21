@@ -1,86 +1,120 @@
-// Neon Tide: Coral Bay — hand-in program for the gta6-01 bounty (Node 22, standard library only).
+// Neon Tide: Coral Bay — hand-in program for the gta6-01 bounty.
+// Written for this recorded round-2 pass. Node 22, standard library only.
 //
-// What this program does, in order:
-//   1. checks that the entry beside it is complete (game/index.html and a proper set of screenshots),
-//   2. copies game/ and screenshots/ into the output directory,
-//   3. asks the vendored make.fun library to summarise the staged copy as dossier.json,
-//   4. prints a short build summary so a human can see what was handed in.
+// The job, end to end:
+//   * look over the entry that sits beside this file and refuse early if a piece is missing,
+//   * stage a copy of game/ and screenshots/ in the output directory,
+//   * ask the vendored library to summarise the staged tree as dossier.json,
+//   * print what was staged, so the hand-in can be eyeballed from the log.
 //
-// The output directory is /output under the grader; anywhere else, MAKEFUN_OUTPUT_DIR names it:
+// MAKEFUN_OUTPUT_DIR says where the output goes; without it the grader's /output is used:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-// To play the game itself, serve this folder (`node serve.ts`) and open game/index.html in a browser.
+// Playing the game is separate: serve this folder and open game/index.html in a browser.
 
-import { cpSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
 
-// The scorer's limits for this bounty, handed to buildDossier whole. text_max_bytes is the only
-// one that shapes the dossier's bytes; the rest make this program refuse exactly what the scorer
-// would refuse (more than 4 screenshots or one over 256 KiB; more than 993 entries or 48 MiB in
-// game/; a path under game/ over 1000 bytes).
-const GATE = {
+// The bounty gate, passed whole to buildDossier. Only text_max_bytes shapes the bytes of
+// the dossier itself; the remaining caps are this program's own early-warning limits, set
+// to the values the task specifies for this hand-in.
+const CAPS = {
   text_max_bytes: 163840,
   screenshots: { max: 4, max_bytes: 262144 },
-  game_max_files: 993,
-  game_max_bytes: 50331648,
+  game_max_files: 1024,
+  game_max_bytes: 67108864,
   game_path_max_bytes: 1000,
 };
 
-const entryDir = dirname(fileURLToPath(import.meta.url));
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const home = dirname(fileURLToPath(import.meta.url));
+const destination = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-/** Refuse early, with a readable reason, when the entry beside this file is incomplete. */
-function checkEntryLayout(dir: string): void {
-  const page = join(dir, 'game', 'index.html');
-  if (!existsSync(page)) throw new Error(`entry is incomplete: ${page} is missing`);
-  const shotsDir = join(dir, 'screenshots');
-  const shots = existsSync(shotsDir)
-    ? readdirSync(shotsDir).filter((name) => /\.(png|jpe?g)$/i.test(name))
-    : [];
-  if (shots.length === 0) throw new Error('entry is incomplete: screenshots/ holds no PNG or JPEG image');
-  if (shots.length > GATE.screenshots.max) {
-    throw new Error(`entry is incomplete: ${shots.length} screenshots, over the ${GATE.screenshots.max} allowed`);
-  }
+const IMAGE_NAME = /\.(png|jpe?g)$/i;
+
+function fail(reason: string): never {
+  throw new Error(`cannot hand in: ${reason}`);
 }
 
-/** Files and bytes under a directory, counted recursively (directories themselves cost no bytes). */
-function measure(dir: string): { files: number; bytes: number } {
-  let files = 0;
-  let bytes = 0;
-  for (const name of readdirSync(dir)) {
-    const path = join(dir, name);
-    const st = statSync(path);
-    if (st.isDirectory()) {
-      const inner = measure(path);
-      files += inner.files;
-      bytes += inner.bytes;
-    } else {
-      files += 1;
-      bytes += st.size;
+/** Names of the screenshot images on disk, in directory order. */
+function screenshotNames(): string[] {
+  const dir = join(home, 'screenshots');
+  if (!existsSync(dir)) fail('screenshots/ is missing');
+  return readdirSync(dir).filter((name) => IMAGE_NAME.test(name));
+}
+
+/** Check the entry's shape against the gate before anything is copied anywhere. */
+function inspectEntry(): void {
+  const page = join(home, 'game', 'index.html');
+  if (!existsSync(page)) fail('game/index.html is missing');
+
+  const names = screenshotNames();
+  if (names.length === 0) fail('screenshots/ holds no PNG or JPEG image');
+  if (names.length > CAPS.screenshots.max) {
+    fail(`${names.length} screenshots, over the ${CAPS.screenshots.max} allowed`);
+  }
+  for (const name of names) {
+    const size = statSync(join(home, 'screenshots', name)).size;
+    if (size > CAPS.screenshots.max_bytes) {
+      fail(`screenshots/${name} is ${size} bytes, over the ${CAPS.screenshots.max_bytes} allowed`);
     }
   }
+
+  // Walk game/ once, holding it to the file-count, byte and path-length caps.
+  let entries = 0;
+  let bytes = 0;
+  const walk = (dir: string): void => {
+    for (const name of readdirSync(dir)) {
+      const path = join(dir, name);
+      const rel = relative(join(home, 'game'), path);
+      if (Buffer.byteLength(rel, 'utf8') > CAPS.game_path_max_bytes) {
+        fail(`game/${rel} has a path over ${CAPS.game_path_max_bytes} bytes`);
+      }
+      entries += 1;
+      const st = statSync(path);
+      if (st.isDirectory()) walk(path);
+      else bytes += st.size;
+    }
+  };
+  walk(join(home, 'game'));
+  if (entries > CAPS.game_max_files) fail(`game/ holds ${entries} entries, over the ${CAPS.game_max_files} allowed`);
+  if (bytes > CAPS.game_max_bytes) fail(`game/ holds ${bytes} bytes, over the ${CAPS.game_max_bytes} allowed`);
+}
+
+/** Copy a folder tree file by file; returns how many files landed and their total size. */
+function stageTree(name: string): { files: number; bytes: number } {
+  const fromRoot = join(home, name);
+  const toRoot = join(destination, name);
+  let files = 0;
+  let bytes = 0;
+  const copy = (from: string, to: string): void => {
+    mkdirSync(to, { recursive: true });
+    for (const entry of readdirSync(from)) {
+      const src = join(from, entry);
+      const dst = join(to, entry);
+      if (statSync(src).isDirectory()) {
+        copy(src, dst);
+      } else {
+        copyFileSync(src, dst);
+        files += 1;
+        bytes += statSync(dst).size;
+      }
+    }
+  };
+  if (existsSync(fromRoot)) copy(fromRoot, toRoot);
   return { files, bytes };
 }
 
-/** Copy one payload folder into the output directory and report what landed there. */
-function stageFolder(name: string): { files: number; bytes: number } {
-  const from = join(entryDir, name);
-  const to = join(outputDir, name);
-  mkdirSync(to, { recursive: true });
-  if (existsSync(from)) cpSync(from, to, { recursive: true });
-  return measure(to);
-}
+inspectEntry();
+mkdirSync(destination, { recursive: true });
+const gameStats = stageTree('game');
+const shotStats = stageTree('screenshots');
 
-checkEntryLayout(entryDir);
-mkdirSync(outputDir, { recursive: true });
-const game = stageFolder('game');
-const shots = stageFolder('screenshots');
+const dossierBytes = buildDossier(destination, CAPS);
+writeFileSync(join(destination, 'dossier.json'), dossierBytes);
 
-const dossier = buildDossier(outputDir, GATE);
-writeFileSync(join(outputDir, 'dossier.json'), dossier);
-
-console.log(`Neon Tide: Coral Bay handed in to ${outputDir}`);
-console.log(`  game/        ${game.files} files, ${game.bytes} bytes`);
-console.log(`  screenshots/ ${shots.files} files, ${shots.bytes} bytes`);
-console.log(`  dossier.json ${dossier.length} bytes`);
+console.log('Neon Tide: Coral Bay — hand-in staged');
+console.log(`  output:      ${destination}`);
+console.log(`  game/:       ${gameStats.files} files, ${gameStats.bytes} bytes`);
+console.log(`  screenshots: ${shotStats.files} files, ${shotStats.bytes} bytes`);
+console.log(`  dossier:     ${dossierBytes.length} bytes written`);

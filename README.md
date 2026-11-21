@@ -4,7 +4,11 @@
 [![rank](https://make.fun/badge/gta6-01/ko1216-lild/gta6-01/rank.svg)](https://make.fun/bounty/gta6-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
 [![reward](https://make.fun/badge/gta6-01/ko1216-lild/gta6-01/reward.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
 
-Neon Tide: Coral Bay — an original top-down open-world crime game that plays offline in a desktop browser from static files. An invented city (Coral Bay, state of Solana) on a 6×5 road grid with named landmarks, a beach and a pier; traffic that drives the grid and pedestrians who flee danger; car theft; a five-star wanted system with police Interceptor pursuits, BUSTED and WASTED states; a five-mission story with dialogue and cash rewards; melee and pistol combat; a HUD with minimap; a title screen, pause, and localStorage autosave. No libraries and no network: every sprite is drawn and every sound is synthesised in code at runtime.
+Neon Tide: Coral Bay is an original top-down open-world crime game that runs offline in a desktop browser from static files alone. Its city, Coral Bay in the invented state of Solana, is laid out on a 6×5 road grid with named landmarks, a beach and a pier. Traffic drives the grid, pedestrians scatter when danger comes close, and cars can be stolen. A five-star wanted system brings CBPD Interceptors after the player, with BUSTED and WASTED outcomes. The story runs through five missions with dialogue and cash rewards; combat covers fists and a pistol; the HUD carries a minimap; and a title screen, pause and localStorage autosave round it out. Nothing is loaded from the network and no library is used — each sprite is drawn and each sound is synthesised in code while the game runs.
+
+## How to play
+
+Walk and drive with W A S D or the arrow keys. Press E to get into a car, F to punch, and aim with the mouse. Follow the gold marker to work through Rosa Delgado's five missions, and keep an eye on the wanted stars: the more heat, the more Interceptors join the chase.
 
 ## Run it
 
@@ -14,7 +18,7 @@ node main.ts   # copies game/ and screenshots/ to the output directory; open gam
 
 ## Round 2 revision
 
-For this revision the hand-in program (main.ts) was rewritten as an authored entrypoint: it now checks that the entry is complete before copying, and prints a build summary of what was staged. The game files were re-issued alongside it. Gameplay is unchanged — same city, same five missions, same screenshots.
+This pass replaces the hand-in program with one written for the occasion: main.ts now inspects the entry against the bounty caps before copying anything, stages game/ and screenshots/ file by file, and reports the staged totals in its own summary. The README was rewritten in the same pass, and every game file was re-issued with it, so the submitted tree is exactly the tree that was recorded. The game itself is untouched — same city, same missions, same screenshots.
 
 ---
 
