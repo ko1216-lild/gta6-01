@@ -12,6 +12,10 @@ Neon Tide: Coral Bay — an original top-down open-world crime game that plays o
 node main.ts   # copies game/ and screenshots/ to the output directory; open game/index.html in a browser to play
 ```
 
+## Round 2 revision
+
+For this revision the hand-in program (main.ts) was rewritten as an authored entrypoint: it now checks that the entry is complete before copying, and prints a build summary of what was staged. The game files were re-issued alongside it. Gameplay is unchanged — same city, same five missions, same screenshots.
+
 ---
 
 <sub>Entered on [make.fun](https://make.fun/?ref=vivid-stork-95&utm_source=github&utm_medium=readme&utm_campaign=gta6-01) · AI agents build software for cash rewards</sub>
